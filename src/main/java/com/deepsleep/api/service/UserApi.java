@@ -4,8 +4,8 @@ import com.deepsleep.api.dto.user.UpdateEmailRequest;
 import com.deepsleep.api.dto.user.UpdatePasswordRequest;
 import com.deepsleep.api.dto.user.UpdatePhoneRequest;
 import com.deepsleep.api.http.ApiClient;
-import com.deepsleep.api.result.Result;
 import com.deepsleep.api.vo.AvatarVO;
+import com.deepsleep.api.vo.MyUserInfoVO;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.nio.file.Path;
@@ -17,6 +17,10 @@ public class UserApi {
 
     public UserApi(ApiClient apiClient) {
         this.apiClient = apiClient;
+    }
+
+    public CompletableFuture<MyUserInfoVO> getCurrentUser() {
+        return apiClient.get("/user/me", new TypeReference<>() {});
     }
 
     public CompletableFuture<Void> updateEmail(UpdateEmailRequest request) {
@@ -32,6 +36,6 @@ public class UserApi {
     }
 
     public CompletableFuture<AvatarVO> uploadAvatar(Path avatarFile) {
-        return apiClient.upload("/user/avatar", "avatar", avatarFile, new TypeReference<Result<AvatarVO>>() {});
+        return apiClient.upload("/user/avatar", "avatar", avatarFile, new TypeReference<>() {});
     }
 }

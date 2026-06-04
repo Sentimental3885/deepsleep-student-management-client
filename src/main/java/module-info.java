@@ -8,7 +8,13 @@ module com.deepsleep {
     requires static lombok;
 
 
-    opens com.deepsleep to javafx.fxml;
+    opens com.deepsleep.ui.auth to javafx.fxml;
+    opens com.deepsleep.ui.layout to javafx.fxml;
+    opens com.deepsleep.ui.common to javafx.fxml;
+    opens com.deepsleep.ui.admin to javafx.fxml;
+    opens com.deepsleep.ui.teacher to javafx.fxml;
+    opens com.deepsleep.ui.student to javafx.fxml;
+    opens com.deepsleep.ui.forms to javafx.fxml;
     opens com.deepsleep.api.dto to com.fasterxml.jackson.databind;
     opens com.deepsleep.api.dto.auth to com.fasterxml.jackson.databind;
     opens com.deepsleep.api.dto.user to com.fasterxml.jackson.databind;
@@ -24,6 +30,7 @@ module com.deepsleep {
     opens com.deepsleep.api.vo to com.fasterxml.jackson.databind;
 
     exports com.deepsleep;
+    exports com.deepsleep.app;
     exports com.deepsleep.api.config;
     exports com.deepsleep.api.dto;
     exports com.deepsleep.api.dto.auth;

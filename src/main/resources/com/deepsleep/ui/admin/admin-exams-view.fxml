@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.deepsleep.ui.admin.AdminExamsController">
+    <VBox spacing="20" styleClass="page-root"><VBox spacing="6"><Label fx:id="pageTitle" styleClass="page-title"/><Label fx:id="pageSubtitle" wrapText="true" styleClass="page-subtitle"/></VBox><FlowPane fx:id="statPane" hgap="12" vgap="12"/><HBox spacing="10" styleClass="toolbar"><Button fx:id="refreshButton" text="刷新" onAction="#onRefresh" styleClass="secondary-button"/><Button fx:id="createButton" text="新增考试" onAction="#onCreate" styleClass="primary-button"/><Button fx:id="editButton" text="编辑" onAction="#onEdit" styleClass="secondary-button"/><Button fx:id="deleteButton" text="删除" onAction="#onDelete" styleClass="danger-button"/></HBox><TableView fx:id="dataTable" prefHeight="390" VBox.vgrow="ALWAYS"/><VBox fx:id="formBox" spacing="12" styleClass="form-panel"/><TextArea fx:id="contentArea" editable="false" wrapText="true" prefRowCount="8"/><Label fx:id="emptyState" wrapText="true" styleClass="empty-state"/></VBox>
+</ScrollPane>

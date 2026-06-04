@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<StackPane styleClass="login-root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.deepsleep.ui.auth.LoginController">
+    <HBox maxWidth="980" maxHeight="560">
+        <VBox spacing="20" prefWidth="470" styleClass="login-hero">
+            <Label text="DeepSleep" styleClass="login-brand"/>
+            <Label text="学生管理客户端" styleClass="login-brand"/>
+            <Label text="围绕教务、选课、考试、成绩分析组织的桌面端工作台。" wrapText="true" styleClass="login-copy"/>
+        </VBox>
+        <VBox spacing="18" prefWidth="430" styleClass="login-card">
+            <padding>
+                <Insets top="36" right="36" bottom="36" left="36"/>
+            </padding>
+            <Label text="登录系统" styleClass="page-title"/>
+            <Label text="请输入账号密码登录系统。" styleClass="page-subtitle"/>
+            <TextField fx:id="usernameField" promptText="用户名"/>
+            <PasswordField fx:id="passwordField" promptText="密码"/>
+            <Button text="进入工作台" onAction="#onLogin" maxWidth="Infinity" styleClass="primary-button"/>
+            <Label fx:id="statusLabel" wrapText="true" styleClass="empty-state"/>
+        </VBox>
+    </HBox>
+</StackPane>
