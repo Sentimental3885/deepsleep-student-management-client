@@ -73,6 +73,13 @@ public enum ResultCode {
 
     EMAIL_CODE_EXPIRED(8000, "邮箱验证码不存在或已过期"),
     EMAIL_CODE_ERROR(8001, "邮箱验证码错误"),
+    EMAIL_SEND_FAILED(8003, "构建/发送HTML邮件失败"),
+    SMS_SEND_FAILED(8004, "短信发送失败"),
+
+    CODE_NOT_EXISTS(9000, "还未对目标发送验证码"),
+    CODE_SEND_TOO_FREQUENTLY(9001, "对同一目标的验证码发送过于频繁"),
+    CODE_INCORRECT(9002, "验证码错误"),
+    CODE_FAILED_ATTEMPTS_TOO_MUCH(9003, "验证码校验失败次数过多"),
 
     UNKNOWN(-1, "未知业务错误"),
 

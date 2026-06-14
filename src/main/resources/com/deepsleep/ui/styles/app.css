@@ -131,6 +131,17 @@
     -fx-text-fill: white;
     -fx-background-radius: 6;
     -fx-padding: 8 14;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(23, 105, 170, 0.16), 8, 0, 0, 2);
+}
+
+.primary-button:hover {
+    -fx-background-color: #0f5f9f;
+}
+
+.primary-button:pressed {
+    -fx-background-color: #0b4f86;
+    -fx-effect: innershadow(gaussian, rgba(8, 38, 65, 0.22), 8, 0, 0, 2);
 }
 
 .secondary-button {
@@ -138,6 +149,27 @@
     -fx-text-fill: #1d4268;
     -fx-background-radius: 6;
     -fx-padding: 8 14;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #dceaf5;
+    -fx-text-fill: #12395f;
+}
+
+.secondary-button:pressed {
+    -fx-background-color: #c7dceb;
+    -fx-effect: innershadow(gaussian, rgba(29, 66, 104, 0.14), 7, 0, 0, 1);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.danger-button:disabled {
+    -fx-opacity: 1;
+    -fx-cursor: default;
+    -fx-background-color: #d8e0ea;
+    -fx-text-fill: #7b8796;
+    -fx-effect: none;
 }
 
 .danger-button {
@@ -145,6 +177,15 @@
     -fx-text-fill: #b42318;
     -fx-background-radius: 6;
     -fx-padding: 8 14;
+    -fx-cursor: hand;
+}
+
+.danger-button:hover {
+    -fx-background-color: #ffe1e1;
+}
+
+.danger-button:pressed {
+    -fx-background-color: #ffd0d0;
 }
 
 .table-view {
@@ -210,6 +251,18 @@
 
 .settings-muted {
     -fx-text-fill: #667085;
+}
+
+.form-message-success {
+    -fx-text-fill: #16794c;
+    -fx-font-size: 12;
+    -fx-padding: 2 0 0 0;
+}
+
+.form-message-error {
+    -fx-text-fill: #b42318;
+    -fx-font-size: 12;
+    -fx-padding: 2 0 0 0;
 }
 
 .avatar-preview {

@@ -1,13 +1,19 @@
 package com.deepsleep.ui.common;
 
-import com.deepsleep.api.dto.auth.EmailCodeRequest;
+import com.deepsleep.api.dto.user.SendEmailCodeRequest;
+import com.deepsleep.api.dto.user.SendPhoneCodeRequest;
 import com.deepsleep.api.dto.user.UpdateEmailRequest;
 import com.deepsleep.api.dto.user.UpdatePasswordRequest;
 import com.deepsleep.api.dto.user.UpdatePhoneRequest;
 import com.deepsleep.api.enums.UserRole;
+import com.deepsleep.api.result.ApiException;
+import com.deepsleep.api.result.ResultCode;
 import com.deepsleep.api.vo.MyUserInfoVO;
 import com.deepsleep.app.AppContext;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -18,6 +24,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,10 +33,14 @@ import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class AccountSettingsController {
 
     private static final long MAX_AVATAR_SIZE = 5L * 1024 * 1024;
+    private static final int CODE_COOLDOWN_SECONDS = 60;
+    private static final String SEND_CODE_TEXT = "发送验证码";
     private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final List<String> ALLOWED_AVATAR_SUFFIXES = List.of(".png", ".jpg", ".jpeg", ".webp");
 
@@ -50,6 +61,10 @@ public class AccountSettingsController {
     @FXML
     private Label statusLabel;
     @FXML
+    private Label contactMessageLabel;
+    @FXML
+    private Label passwordMessageLabel;
+    @FXML
     private TextField newEmailField;
     @FXML
     private TextField emailCodeField;
@@ -63,6 +78,12 @@ public class AccountSettingsController {
     private PasswordField newPasswordField;
     @FXML
     private PasswordField confirmPasswordField;
+    @FXML
+    private Button sendEmailCodeButton;
+    @FXML
+    private Button sendPhoneCodeButton;
+    @FXML
+    private Button sendPasswordCodeButton;
     @FXML
     private VBox avatarDropZone;
     @FXML
@@ -83,80 +104,105 @@ public class AccountSettingsController {
 
     @FXML
     public void onSendEmailCode() {
+        clearMessage(contactMessageLabel);
         String email = value(newEmailField);
         if (email.isBlank()) {
-            setStatus("请先填写新邮箱。");
+            setError(contactMessageLabel, "请先填写新邮箱。");
             return;
         }
-        sendCode(email, "验证码已发送到新邮箱。");
+        sendCode(sendEmailCodeButton,
+                () -> AppContext.getInstance().apiServices().userApi().sendEmailCode(new SendEmailCodeRequest(email)),
+                contactMessageLabel,
+                "验证码已发送到新邮箱。");
     }
 
     @FXML
-    public void onSendCurrentEmailCode() {
-        if (currentUser == null || blank(currentUser.email())) {
-            setStatus("当前账号没有可用邮箱，无法发送验证码。");
+    public void onSendPhoneCode() {
+        clearMessage(contactMessageLabel);
+        String phone = value(newPhoneField);
+        if (phone.isBlank()) {
+            setError(contactMessageLabel, "请先填写新手机号。");
             return;
         }
-        sendCode(currentUser.email(), "验证码已发送到当前绑定邮箱。");
+        sendCode(sendPhoneCodeButton,
+                () -> AppContext.getInstance().apiServices().userApi().sendPhoneCode(new SendPhoneCodeRequest(phone)),
+                contactMessageLabel,
+                "验证码已发送到新手机号。");
+    }
+
+    @FXML
+    public void onSendPasswordCode() {
+        clearMessage(passwordMessageLabel);
+        if (currentUser == null || blank(currentUser.email())) {
+            setError(passwordMessageLabel, "当前账号没有可用邮箱，无法发送验证码。");
+            return;
+        }
+        sendCode(sendPasswordCodeButton,
+                () -> AppContext.getInstance().apiServices().userApi().sendPasswordCode(),
+                passwordMessageLabel,
+                "验证码已发送到当前绑定邮箱。");
     }
 
     @FXML
     public void onUpdateEmail() {
+        clearMessage(contactMessageLabel);
         String email = value(newEmailField);
         String code = value(emailCodeField);
         if (email.isBlank() || code.isBlank()) {
-            setStatus("请填写新邮箱和验证码。");
+            setError(contactMessageLabel, "请填写新邮箱和验证码。");
             return;
         }
         AppContext.getInstance().apiServices().userApi()
                 .updateEmail(new UpdateEmailRequest(email, code))
                 .whenComplete(UiAsync.onComplete(ignored -> {
-                    setStatus("邮箱更新成功。");
+                    setSuccess(contactMessageLabel, "邮箱更新成功。");
                     clear(newEmailField, emailCodeField);
                     loadProfile();
-                }, error -> setStatus(UiAsync.errorMessage(error))));
+                }, error -> showAccountError(error, contactMessageLabel)));
     }
 
     @FXML
     public void onUpdatePhone() {
+        clearMessage(contactMessageLabel);
         String phone = value(newPhoneField);
         String code = value(phoneCodeField);
         if (phone.isBlank() || code.isBlank()) {
-            setStatus("请填写新手机号和验证码。");
+            setError(contactMessageLabel, "请填写新手机号和验证码。");
             return;
         }
         AppContext.getInstance().apiServices().userApi()
                 .updatePhone(new UpdatePhoneRequest(phone, code))
                 .whenComplete(UiAsync.onComplete(ignored -> {
-                    setStatus("手机号更新成功。");
+                    setSuccess(contactMessageLabel, "手机号更新成功。");
                     clear(newPhoneField, phoneCodeField);
                     loadProfile();
-                }, error -> setStatus(UiAsync.errorMessage(error))));
+                }, error -> showAccountError(error, contactMessageLabel)));
     }
 
     @FXML
     public void onUpdatePassword() {
+        clearMessage(passwordMessageLabel);
         if (currentUser == null || blank(currentUser.email())) {
-            setStatus("当前账号没有可用邮箱，无法修改密码。");
+            setError(passwordMessageLabel, "当前账号没有可用邮箱，无法修改密码。");
             return;
         }
         String code = value(passwordCodeField);
         String password = newPasswordField.getText() == null ? "" : newPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText() == null ? "" : confirmPasswordField.getText();
         if (code.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
-            setStatus("请填写验证码、新密码和确认密码。");
+            setError(passwordMessageLabel, "请填写验证码、新密码和确认密码。");
             return;
         }
         if (!password.equals(confirmPassword)) {
-            setStatus("两次输入的新密码不一致。");
+            setError(passwordMessageLabel, "两次输入的新密码不一致。");
             return;
         }
         AppContext.getInstance().apiServices().userApi()
-                .updatePassword(new UpdatePasswordRequest(currentUser.email(), code, password))
+                .updatePassword(new UpdatePasswordRequest(code, password))
                 .whenComplete(UiAsync.onComplete(ignored -> {
-                    setStatus("密码更新成功。");
+                    setSuccess(passwordMessageLabel, "密码更新成功。");
                     clear(passwordCodeField, newPasswordField, confirmPasswordField);
-                }, error -> setStatus(UiAsync.errorMessage(error))));
+                }, error -> showAccountError(error, passwordMessageLabel)));
     }
 
     @FXML
@@ -233,10 +279,92 @@ public class AccountSettingsController {
         setAvatar(user.avatar());
     }
 
-    private void sendCode(String email, String successMessage) {
-        AppContext.getInstance().apiServices().emailApi()
-                .sendCode(new EmailCodeRequest(email))
-                .whenComplete(UiAsync.onComplete(ignored -> setStatus(successMessage), error -> setStatus(UiAsync.errorMessage(error))));
+    private void sendCode(
+            Button button,
+            Supplier<CompletableFuture<Void>> requestSupplier,
+            Label messageLabel,
+            String successMessage
+    ) {
+        button.setDisable(true);
+        button.setText("发送中...");
+        try {
+            requestSupplier.get()
+                    .whenComplete(UiAsync.onComplete(ignored -> {
+                        setSuccess(messageLabel, successMessage);
+                        startCodeCountdown(button);
+                    }, error -> {
+                        restoreCodeButton(button);
+                        showAccountError(error, messageLabel);
+                    }));
+        } catch (RuntimeException ex) {
+            restoreCodeButton(button);
+            showAccountError(ex, messageLabel);
+        }
+    }
+
+    private void startCodeCountdown(Button button) {
+        final int[] secondsLeft = {CODE_COOLDOWN_SECONDS};
+        button.setDisable(true);
+        button.setText(secondsLeft[0] + "秒后重试");
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            secondsLeft[0]--;
+            if (secondsLeft[0] <= 0) {
+                restoreCodeButton(button);
+                return;
+            }
+            button.setText(secondsLeft[0] + "秒后重试");
+        }));
+        timeline.setCycleCount(CODE_COOLDOWN_SECONDS);
+        timeline.play();
+    }
+
+    private void restoreCodeButton(Button button) {
+        button.setDisable(false);
+        button.setText(SEND_CODE_TEXT);
+    }
+
+    private void showAccountError(Throwable error, Label targetLabel) {
+        setError(targetLabel, accountErrorMessage(error));
+    }
+
+    private String accountErrorMessage(Throwable error) {
+        if (error instanceof ApiException apiException) {
+            ResultCode code = apiException.getResultCode();
+            return switch (code) {
+                case EMAIL_OCCUPIED -> "该邮箱已被占用，请更换邮箱。";
+                case PHONE_OCCUPIED -> "该手机号已被占用，请更换手机号。";
+                case EMAIL_NOT_BOUND -> "当前账号未绑定邮箱，无法发送密码验证码。";
+                case EMAIL_CODE_EXPIRED, CODE_NOT_EXISTS -> "验证码不存在或已过期，请重新发送。";
+                case EMAIL_CODE_ERROR, CODE_INCORRECT -> "验证码错误，请检查后重试。";
+                case CODE_SEND_TOO_FREQUENTLY -> "验证码发送过于频繁，请稍后再试。";
+                case CODE_FAILED_ATTEMPTS_TOO_MUCH -> "验证码校验失败次数过多，请重新发送。";
+                case EMAIL_SEND_FAILED -> "邮件发送失败，请稍后重试。";
+                case SMS_SEND_FAILED -> "短信发送失败，请稍后重试。";
+                case BAD_REQUEST -> "请检查填写内容后再提交。";
+                case UNAUTHORIZED -> "登录状态已失效，请重新登录。";
+                default -> UiAsync.errorMessage(apiException);
+            };
+        }
+        return UiAsync.errorMessage(error);
+    }
+
+    private void clearMessage(Label label) {
+        setMessage(label, "", false);
+    }
+
+    private void setSuccess(Label label, String message) {
+        setMessage(label, message, false);
+    }
+
+    private void setError(Label label, String message) {
+        setMessage(label, message, true);
+    }
+
+    private void setMessage(Label label, String message, boolean error) {
+        label.setText(message == null ? "" : message);
+        label.getStyleClass().removeAll("form-message-success", "form-message-error");
+        label.getStyleClass().add(error ? "form-message-error" : "form-message-success");
     }
 
     private void selectAvatar(Path file) {

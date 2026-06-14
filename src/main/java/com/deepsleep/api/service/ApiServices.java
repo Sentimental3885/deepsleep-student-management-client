@@ -9,7 +9,6 @@ public final class ApiServices {
     private final TokenStore tokenStore;
     private final ApiClient apiClient;
     private final AuthApi authApi;
-    private final EmailApi emailApi;
     private final UserApi userApi;
     private final AdminApi adminApi;
     private final StudentApi studentApi;
@@ -26,7 +25,6 @@ public final class ApiServices {
         this.tokenStore = tokenStore;
         this.apiClient = new ApiClient(config, tokenStore);
         this.authApi = new AuthApi(apiClient, tokenStore);
-        this.emailApi = new EmailApi(apiClient);
         this.userApi = new UserApi(apiClient);
         this.adminApi = new AdminApi(apiClient);
         this.studentApi = new StudentApi(apiClient);
@@ -58,10 +56,6 @@ public final class ApiServices {
 
     public AuthApi authApi() {
         return authApi;
-    }
-
-    public EmailApi emailApi() {
-        return emailApi;
     }
 
     public UserApi userApi() {
