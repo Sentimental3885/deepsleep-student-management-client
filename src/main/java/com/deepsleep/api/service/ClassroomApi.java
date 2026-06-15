@@ -1,8 +1,8 @@
 package com.deepsleep.api.service;
 
+import com.deepsleep.api.dto.classroom.ClassroomAvailableQuery;
 import com.deepsleep.api.dto.classroom.ClassroomRequest;
 import com.deepsleep.api.http.ApiClient;
-import com.deepsleep.api.result.Result;
 import com.deepsleep.api.vo.ClassroomVO;
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -18,7 +18,15 @@ public class ClassroomApi {
     }
 
     public CompletableFuture<List<ClassroomVO>> listClassrooms() {
-        return apiClient.get("/classroom/list", new TypeReference<Result<List<ClassroomVO>>>() {});
+        return apiClient.get("/classroom/list", new TypeReference<>() {});
+    }
+
+    public CompletableFuture<List<ClassroomVO>> listAvailableClassrooms(ClassroomAvailableQuery query) {
+        return apiClient.get(
+                "/classroom/available",
+                query.toQueryParams(),
+                new TypeReference<>() {}
+        );
     }
 
     public CompletableFuture<Void> createClassroom(ClassroomRequest request) {

@@ -1,11 +1,15 @@
 package com.deepsleep.api.service;
 
 import com.deepsleep.api.dto.course.CreateCourseRequest;
+import com.deepsleep.api.dto.course.CourseClazzUpdateRequest;
+import com.deepsleep.api.dto.course.CourseQuery;
 import com.deepsleep.api.dto.course.UpdateCourseRequest;
 import com.deepsleep.api.dto.schedule.ScheduleRequest;
 import com.deepsleep.api.http.ApiClient;
-import com.deepsleep.api.result.Result;
+import com.deepsleep.api.result.PageResult;
+import com.deepsleep.api.vo.ClazzVO;
 import com.deepsleep.api.vo.CourseVO;
+import com.deepsleep.api.vo.ExamVO;
 import com.deepsleep.api.vo.ScheduleVO;
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -25,7 +29,34 @@ public class CourseApi {
     }
 
     public CompletableFuture<CourseVO> getCourse(Long courseId) {
-        return apiClient.get("/course/detail/%d".formatted(courseId), new TypeReference<Result<CourseVO>>() {});
+        return apiClient.get("/course/detail/%d".formatted(courseId), new TypeReference<>() {});
+    }
+
+    public CompletableFuture<PageResult<CourseVO>> listCourses(CourseQuery query) {
+        return apiClient.get(
+                "/course/list",
+                query.toQueryParams(),
+                new TypeReference<>() {}
+        );
+    }
+
+    @SuppressWarnings("unused")
+    public CompletableFuture<List<ClazzVO>> listCourseClazzes(Long courseId) {
+        return apiClient.get(
+                "/course/%d/clazzes".formatted(courseId),
+                new TypeReference<>() {}
+        );
+    }
+
+    public CompletableFuture<Void> updateCourseClazzes(Long courseId, CourseClazzUpdateRequest request) {
+        return apiClient.putVoid("/course/%d/clazzes".formatted(courseId), request);
+    }
+
+    public CompletableFuture<List<ExamVO>> listCourseExams(Long courseId) {
+        return apiClient.get(
+                "/course/%d/exams".formatted(courseId),
+                new TypeReference<>() {}
+        );
     }
 
     public CompletableFuture<Void> deleteCourse(Long courseId) {
@@ -39,7 +70,7 @@ public class CourseApi {
     public CompletableFuture<List<ScheduleVO>> listSchedules(Long courseId) {
         return apiClient.get(
                 "/course/schedule/%d".formatted(courseId),
-                new TypeReference<Result<List<ScheduleVO>>>() {}
+                new TypeReference<>() {}
         );
     }
 

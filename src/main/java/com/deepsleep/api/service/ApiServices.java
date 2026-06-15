@@ -15,6 +15,7 @@ public final class ApiServices {
     private final TeacherApi teacherApi;
     private final CourseApi courseApi;
     private final SelectionApi selectionApi;
+    private final ScheduleApi scheduleApi;
     private final ExamApi examApi;
     private final NoticeApi noticeApi;
     private final OrganizationApi organizationApi;
@@ -31,6 +32,7 @@ public final class ApiServices {
         this.teacherApi = new TeacherApi(apiClient);
         this.courseApi = new CourseApi(apiClient);
         this.selectionApi = new SelectionApi(apiClient);
+        this.scheduleApi = new ScheduleApi(apiClient);
         this.examApi = new ExamApi(apiClient);
         this.noticeApi = new NoticeApi(apiClient);
         this.organizationApi = new OrganizationApi(apiClient);
@@ -46,6 +48,7 @@ public final class ApiServices {
         return new ApiServices(config, tokenStore);
     }
 
+    @SuppressWarnings("unused")
     public TokenStore tokenStore() {
         return tokenStore;
     }
@@ -80,6 +83,10 @@ public final class ApiServices {
 
     public SelectionApi selectionApi() {
         return selectionApi;
+    }
+
+    public ScheduleApi scheduleApi() {
+        return scheduleApi;
     }
 
     public ExamApi examApi() {

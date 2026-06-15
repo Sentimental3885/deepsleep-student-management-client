@@ -1,6 +1,7 @@
 package com.deepsleep.api.vo;
 
 public record ScheduleVO(
+        Long id,
         Long courseId,
         String courseName,
         String teacherName,

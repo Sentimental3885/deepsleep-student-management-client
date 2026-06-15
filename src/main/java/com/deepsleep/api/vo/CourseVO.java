@@ -1,6 +1,7 @@
 package com.deepsleep.api.vo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record CourseVO(
         Long id,
@@ -14,6 +15,10 @@ public record CourseVO(
         String semester,
         BigDecimal credit,
         Integer status,
-        String introduction
+        String introduction,
+        List<ClazzVO> clazzes,
+        Boolean selectable,
+        String unselectableReason,
+        String mySelectionStatus
 ) {
 }

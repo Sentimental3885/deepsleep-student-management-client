@@ -49,14 +49,18 @@ public abstract class BaseStaticPageController {
     @FXML
     public void initialize() {
         StaticPageSpec spec = pageSpec();
-        pageTitle.setText(spec.title());
-        pageSubtitle.setText(spec.subtitle());
-        fillStats(spec);
-        fillTable(spec);
-        fillForm(spec);
-        fillContent(spec);
-        tuneActions(spec);
+        StaticPageSpec initialSpec = shouldClearStaticDataOnInit() ? withoutStaticData(spec) : spec;
+        pageTitle.setText(initialSpec.title());
+        pageSubtitle.setText(initialSpec.subtitle());
+        fillStats(initialSpec);
+        fillTable(initialSpec);
+        fillForm(initialSpec);
+        fillContent(initialSpec);
+        tuneActions(initialSpec);
         configureActions();
+        if (shouldClearStaticDataOnInit()) {
+            showStatus("正在加载数据...");
+        }
         loadRemoteData();
     }
 
@@ -68,12 +72,50 @@ public abstract class BaseStaticPageController {
     protected void configureActions() {
     }
 
+    private void clearRemoteData(StaticPageSpec spec) {
+        fillStats(withoutStaticData(spec));
+        fillTable(new StaticPageSpec(
+                spec.title(),
+                spec.subtitle(),
+                List.of(),
+                spec.columns(),
+                List.of(),
+                List.of(),
+                ""
+        ));
+        hideContent();
+    }
+
+    private boolean shouldClearStaticDataOnInit() {
+        try {
+            return getClass().getDeclaredMethod("loadRemoteData").getDeclaringClass() != BaseStaticPageController.class;
+        } catch (NoSuchMethodException ignored) {
+            return false;
+        }
+    }
+
+    private StaticPageSpec withoutStaticData(StaticPageSpec spec) {
+        return new StaticPageSpec(
+                spec.title(),
+                spec.subtitle(),
+                List.of(),
+                spec.columns(),
+                List.of(),
+                spec.formFields(),
+                ""
+        );
+    }
+
     @FXML
     public final void onRefresh() {
         handleRefresh();
     }
 
     protected void handleRefresh() {
+        if (shouldClearStaticDataOnInit()) {
+            clearRemoteData(pageSpec());
+            showStatus("正在加载数据...");
+        }
         loadRemoteData();
     }
 
@@ -197,6 +239,12 @@ public abstract class BaseStaticPageController {
         contentArea.setText(value == null ? "" : value);
     }
 
+    private void hideContent() {
+        contentArea.clear();
+        contentArea.setVisible(false);
+        contentArea.setManaged(false);
+    }
+
     protected String formValue(String promptText) {
         return formBox.getChildren().stream()
                 .filter(TextField.class::isInstance)
@@ -257,11 +305,7 @@ public abstract class BaseStaticPageController {
     }
 
     protected Long selectedLong(int columnIndex) {
-        ObservableList<String> row = dataTable.getSelectionModel().getSelectedItem();
-        if (row == null || row.size() <= columnIndex || row.get(columnIndex).isBlank()) {
-            return null;
-        }
-        return Long.valueOf(row.get(columnIndex));
+        return CourseTables.selectedLong(dataTable, columnIndex);
     }
 
     @SuppressWarnings("SameParameterValue")

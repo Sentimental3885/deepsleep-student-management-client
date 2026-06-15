@@ -21,6 +21,7 @@ module com.deepsleep {
     opens com.deepsleep.api.dto.admin to com.fasterxml.jackson.databind;
     opens com.deepsleep.api.dto.course to com.fasterxml.jackson.databind;
     opens com.deepsleep.api.dto.selection to com.fasterxml.jackson.databind;
+    opens com.deepsleep.api.dto.teacher to com.fasterxml.jackson.databind;
     opens com.deepsleep.api.dto.exam to com.fasterxml.jackson.databind;
     opens com.deepsleep.api.dto.notice to com.fasterxml.jackson.databind;
     opens com.deepsleep.api.dto.organization to com.fasterxml.jackson.databind;
@@ -38,6 +39,7 @@ module com.deepsleep {
     exports com.deepsleep.api.dto.admin;
     exports com.deepsleep.api.dto.course;
     exports com.deepsleep.api.dto.selection;
+    exports com.deepsleep.api.dto.teacher;
     exports com.deepsleep.api.dto.exam;
     exports com.deepsleep.api.dto.notice;
     exports com.deepsleep.api.dto.organization;

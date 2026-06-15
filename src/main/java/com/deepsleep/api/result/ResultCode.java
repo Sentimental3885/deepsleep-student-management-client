@@ -31,6 +31,7 @@ public enum ResultCode {
     COURSE_NOT_FOUND(2001, "课程不存在"),
     COURSE_UNAVAILABLE(2002, "课程不可选"),
     COURSE_FULL(2003, "课程已满员"),
+    COURSE_TIME_CONFLICT(2004, "课程时间冲突"),
 
     SELECTION_NOT_FOUND(2100, "课程未被选"),
     COURSE_PICKED(2102, "课程已被选"),
