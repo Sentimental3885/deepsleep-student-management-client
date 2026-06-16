@@ -27,7 +27,6 @@ public final class Rows {
 
     public static List<String> adminUser(AdminUserVO user) {
         return List.of(
-                text(user.id()),
                 text(user.username()),
                 text(user.name()),
                 UserRole.of(user.role()).label(),
@@ -58,7 +57,6 @@ public final class Rows {
 
     public static List<String> log(OperationLogVO log) {
         return List.of(
-                text(log.id()),
                 text(log.operatorName()),
                 text(log.operation()),
                 text(log.method()),
@@ -81,6 +79,10 @@ public final class Rows {
 
     public static List<String> classroom(ClassroomVO classroom) {
         return List.of(text(classroom.id()), text(classroom.name()));
+    }
+
+    public static List<String> classroomSummary(ClassroomVO classroom) {
+        return List.of(text(classroom.name()));
     }
 
     public static List<String> course(CourseVO course) {

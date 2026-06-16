@@ -33,7 +33,7 @@ public class AdminLogsController extends BaseStaticPageController {
                 .listLogs(new PageQuery(pageNum, 20))
                 .whenComplete(UiAsync.onComplete(page -> {
                     totalPages = page.pages() == null ? 1 : Math.max(1, page.pages());
-                    setTable(List.of("ID", "操作人", "操作", "方法", "状态", "时间"), page.records().stream().map(Rows::log).toList());
+                    setTable(List.of("操作人", "操作", "方法", "状态", "时间"), page.records().stream().map(Rows::log).toList());
                     showStatus("日志加载完成，第 " + pageNum + " / " + totalPages + " 页，共 " + Rows.text(page.total()) + " 条。");
                 }, error -> showStatus(UiAsync.errorMessage(error))));
     }

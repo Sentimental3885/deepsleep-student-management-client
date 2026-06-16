@@ -49,8 +49,9 @@ public class AdminCourseManagementController {
     private final ComboBox<Choice<ClazzVO>> clazzFilterBox = new ComboBox<>();
 
     private final TableView<ObservableList<String>> courseTable = CourseTables.table(
-            List.of("ID", "代码", "课程", "教师", "学期", "学分", "容量", "已选", "状态", "开课班级"));
+            List.of("代码", "课程", "教师", "学期", "学分", "容量", "已选", "状态", "开课班级"));
     private CourseWorkspacePane workspace;
+    private List<CourseVO> currentCourses = List.of();
 
     @FXML
     public void initialize() {
@@ -94,8 +95,8 @@ public class AdminCourseManagementController {
         );
         AppContext.getInstance().apiServices().courseApi().listCourses(query)
                 .whenComplete(UiAsync.onComplete(page -> {
-                    List<CourseVO> records = page.records() == null ? List.of() : page.records();
-                    CourseTables.setRows(courseTable, records.stream().map(this::courseRow).toList());
+                    currentCourses = page.records() == null ? List.of() : page.records();
+                    CourseTables.setRows(courseTable, currentCourses.stream().map(this::courseRow).toList());
                     statusLabel.setText("课程列表加载完成，共 " + Rows.text(page.total()) + " 条。");
                 }, error -> statusLabel.setText(UiAsync.errorMessage(error))));
     }
@@ -168,7 +169,7 @@ public class AdminCourseManagementController {
     }
 
     private void openSelectedCourse() {
-        Long courseId = CourseTables.selectedLong(courseTable, 0);
+        Long courseId = selectedCourseId();
         if (courseId != null) {
             workspace.selectCourse(courseId);
         }
@@ -176,7 +177,6 @@ public class AdminCourseManagementController {
 
     private List<String> courseRow(CourseVO course) {
         return List.of(
-                Rows.text(course.id()),
                 Rows.text(course.code()),
                 Rows.text(course.name()),
                 Rows.text(course.teacherName()),
@@ -187,6 +187,14 @@ public class AdminCourseManagementController {
                 CourseStatus.of(course.status()).label(),
                 clazzNames(course.clazzes())
         );
+    }
+
+    private Long selectedCourseId() {
+        int index = courseTable.getSelectionModel().getSelectedIndex();
+        if (index < 0 || index >= currentCourses.size()) {
+            return null;
+        }
+        return currentCourses.get(index).id();
     }
 
     private String clazzNames(List<ClazzVO> clazzes) {

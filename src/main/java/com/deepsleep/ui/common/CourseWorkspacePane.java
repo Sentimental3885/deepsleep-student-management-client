@@ -844,12 +844,21 @@ public class CourseWorkspacePane extends VBox {
     private void hideTechnicalColumns() {
         if (!scheduleTable.getColumns().isEmpty()) {
             scheduleTable.getColumns().getFirst().setVisible(false);
+            if (scheduleTable.getColumns().size() > 1) {
+                scheduleTable.getColumns().get(1).setVisible(false);
+            }
         }
         if (!examTable.getColumns().isEmpty()) {
             examTable.getColumns().getFirst().setVisible(false);
         }
         if (!studentTable.getColumns().isEmpty()) {
             studentTable.getColumns().getFirst().setVisible(false);
+        }
+        if (!conflictTable.getColumns().isEmpty()) {
+            conflictTable.getColumns().getFirst().setVisible(false);
+            if (conflictTable.getColumns().size() > 1) {
+                conflictTable.getColumns().get(1).setVisible(false);
+            }
         }
     }
 

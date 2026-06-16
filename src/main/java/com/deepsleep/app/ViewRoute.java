@@ -9,12 +9,8 @@ import java.util.stream.Stream;
 public enum ViewRoute {
     ACCOUNT("账号设置", "通用", "/com/deepsleep/ui/common/account-settings-view.fxml", roles()),
     NOTICE_LIST("公告列表", "通用", "/com/deepsleep/ui/common/notice-list-view.fxml", roles()),
-    EXAM_DETAIL("考试详情", "通用", "/com/deepsleep/ui/common/exam-detail-view.fxml", roles()),
 
     ADMIN_USERS("用户管理", "管理员", "/com/deepsleep/ui/admin/admin-users-view.fxml", roles(UserRole.ADMIN)),
-    ADMIN_STUDENT_FORM("学生表单", "管理员", "/com/deepsleep/ui/admin/admin-student-form.fxml", roles(UserRole.ADMIN)),
-    ADMIN_TEACHER_FORM("教师表单", "管理员", "/com/deepsleep/ui/admin/admin-teacher-form.fxml", roles(UserRole.ADMIN)),
-    ADMIN_USER_EDIT("账号编辑", "管理员", "/com/deepsleep/ui/admin/admin-user-edit-form.fxml", roles(UserRole.ADMIN)),
     ADMIN_ORGANIZATION("组织架构", "管理员", "/com/deepsleep/ui/admin/admin-organization-view.fxml", roles(UserRole.ADMIN)),
     ADMIN_CLASSROOMS("教室管理", "管理员", "/com/deepsleep/ui/admin/admin-classrooms-view.fxml", roles(UserRole.ADMIN)),
     ADMIN_COURSES("课程与排课管理", "管理员", "/com/deepsleep/ui/admin/admin-course-management-view.fxml", roles(UserRole.ADMIN)),

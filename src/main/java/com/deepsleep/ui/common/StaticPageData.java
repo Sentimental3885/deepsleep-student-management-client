@@ -29,50 +29,14 @@ public final class StaticPageData {
                 "");
     }
 
-    public static StaticPageSpec examDetail() {
-        return spec("考试详情", "展示考试时间、类型、教室和监考教师。",
-                List.of(),
-                List.of("课程", "考试类型", "考试时间", "监考教师", "备注"),
-                List.of(List.of("数据结构", "期末", "2026-07-01 09:00", "李老师", "闭卷")),
-                List.of("考试 ID"),
-                "");
-    }
-
     public static StaticPageSpec adminUsers() {
         return table("用户管理", "管理员维护学生、教师账号，支持筛选、分页、详情、重置密码和删除。",
                 List.of("用户 1280", "学生 1130", "教师 150"),
-                List.of("ID", "用户名", "姓名", "角色", "手机号", "邮箱", "创建时间"),
+                List.of("用户名", "姓名", "角色", "手机号", "邮箱", "创建时间"),
                 List.of(
                         List.of("2024001001", "林一", "学生", "13800000001", "linyi@example.com", "2026-03-01"),
                         List.of("T2024012", "陈老师", "教师", "13900000012", "chen@example.com", "2026-02-18")
                 ));
-    }
-
-    public static StaticPageSpec adminStudentForm() {
-        return spec("学生表单", "新增或编辑学生扩展信息，学院、专业、班级后续通过组织接口联动。",
-                List.of(),
-                List.of(),
-                List.of(),
-                List.of("用户 ID", "学号 ssid", "姓名", "性别", "学院", "专业", "班级", "入学日期", "职务"),
-                "");
-    }
-
-    public static StaticPageSpec adminTeacherForm() {
-        return spec("教师表单", "新增或编辑教师扩展信息，学院必填，职称和入职日期可选。",
-                List.of(),
-                List.of(),
-                List.of(),
-                List.of("用户 ID", "工号 tsid", "姓名", "性别", "学院", "职称", "入职日期"),
-                "");
-    }
-
-    public static StaticPageSpec adminUserEdit() {
-        return spec("账号编辑", "编辑用户通用资料，不直接处理密码和 token。",
-                List.of(),
-                List.of(),
-                List.of(),
-                List.of("用户 ID", "姓名", "性别", "手机号", "邮箱"),
-                "");
     }
 
     public static StaticPageSpec adminOrganization() {
@@ -90,12 +54,11 @@ public final class StaticPageData {
     public static StaticPageSpec adminClassrooms() {
         return table("教室管理", "维护教室名称，删除前后端会检查排课和考试引用。",
                 List.of("教室 64", "可用 58", "冲突校验"),
-                List.of("ID", "教室名称"),
+                List.of("教室名称"),
                 List.of(
-                        List.of("1", "A101"),
-                        List.of("2", "B203")
-                ),
-                List.of("教室 ID", "教室名称"));
+                        List.of("A101"),
+                        List.of("B203")
+                ));
     }
 
     public static StaticPageSpec adminCourses() {
@@ -112,20 +75,18 @@ public final class StaticPageData {
     public static StaticPageSpec adminExams() {
         return table("考试管理", "管理员分页查看考试，创建或调整考试安排。",
                 List.of("考试 18", "本月 6", "冲突校验"),
-                List.of("ID", "课程", "类型", "时间", "时长", "教室", "监考教师", "备注"),
+                List.of("课程", "类型", "时间", "时长", "教室", "监考教师", "备注"),
                 List.of(
                         List.of("数据结构", "期末", "2026-07-01 09:00", "A301", "李老师"),
                         List.of("线性代数", "期中", "2026-06-18 14:00", "B102", "赵老师")
-                ),
-                List.of("课程", "考试类型", "考试时间", "时长", "教室", "监考教师", "备注"));
+                ));
     }
 
     public static StaticPageSpec adminNotices() {
         return table("公告管理", "管理员发布、编辑和删除公告，普通用户从公告列表阅读。",
                 List.of(),
-                List.of("ID", "标题", "发布人", "创建时间", "更新时间"),
-                List.of(List.of("1", "选课系统开放通知", "管理员", "2026-05-28 14:30", "2026-05-29 08:10")),
-                List.of("公告标题", "公告正文"));
+                List.of("标题", "发布人", "创建时间", "更新时间"),
+                List.of(List.of("选课系统开放通知", "管理员", "2026-05-28 14:30", "2026-05-29 08:10")));
     }
 
     public static StaticPageSpec adminLogs() {
