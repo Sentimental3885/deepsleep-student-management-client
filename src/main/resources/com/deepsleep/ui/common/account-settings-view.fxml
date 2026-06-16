@@ -50,23 +50,23 @@
                 <VBox spacing="18" HBox.hgrow="ALWAYS">
                     <VBox spacing="14" styleClass="settings-section">
                         <Label text="联系方式" styleClass="settings-section-title"/>
-                        <GridPane hgap="12" vgap="12">
+                        <GridPane hgap="12" vgap="12" maxWidth="720">
                             <columnConstraints>
                                 <ColumnConstraints minWidth="96"/>
-                                <ColumnConstraints hgrow="ALWAYS"/>
+                                <ColumnConstraints minWidth="360" prefWidth="420" maxWidth="420"/>
                                 <ColumnConstraints minWidth="118"/>
                             </columnConstraints>
                             <Label text="新邮箱" styleClass="settings-field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                            <TextField fx:id="newEmailField" promptText="输入新的邮箱地址" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <TextField fx:id="newEmailField" promptText="输入新的邮箱地址" prefWidth="420" maxWidth="420" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
                             <Button fx:id="sendEmailCodeButton" text="发送验证码" onAction="#onSendEmailCode" minWidth="104" styleClass="secondary-button" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
                             <Label text="验证码" styleClass="settings-field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <TextField fx:id="emailCodeField" promptText="邮箱验证码" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <TextField fx:id="emailCodeField" promptText="邮箱验证码" prefWidth="260" maxWidth="260" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
                             <Button text="保存邮箱" onAction="#onUpdateEmail" styleClass="primary-button" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
                             <Label text="新手机号" styleClass="settings-field-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                            <TextField fx:id="newPhoneField" promptText="输入新的手机号" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <TextField fx:id="newPhoneField" promptText="输入新的手机号" prefWidth="420" maxWidth="420" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
                             <Button fx:id="sendPhoneCodeButton" text="发送验证码" onAction="#onSendPhoneCode" minWidth="104" styleClass="secondary-button" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
                             <Label text="验证码" styleClass="settings-field-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                            <TextField fx:id="phoneCodeField" promptText="发送到新手机号的验证码" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            <TextField fx:id="phoneCodeField" promptText="发送到新手机号的验证码" prefWidth="260" maxWidth="260" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
                             <Button text="保存手机号" onAction="#onUpdatePhone" styleClass="primary-button" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
                             <Label fx:id="contactMessageLabel" wrapText="true" styleClass="form-message-success" GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
                         </GridPane>
@@ -74,20 +74,20 @@
 
                     <VBox spacing="14" styleClass="settings-section">
                         <Label text="密码与安全" styleClass="settings-section-title"/>
-                        <GridPane hgap="12" vgap="12">
+                        <GridPane hgap="12" vgap="12" maxWidth="720">
                             <columnConstraints>
                                 <ColumnConstraints minWidth="96"/>
-                                <ColumnConstraints hgrow="ALWAYS"/>
+                                <ColumnConstraints minWidth="360" prefWidth="420" maxWidth="420"/>
                                 <ColumnConstraints minWidth="118"/>
                             </columnConstraints>
                             <Label text="验证码" styleClass="settings-field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                            <TextField fx:id="passwordCodeField" promptText="发送到当前绑定邮箱的验证码" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <TextField fx:id="passwordCodeField" promptText="发送到当前绑定邮箱的验证码" prefWidth="260" maxWidth="260" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
                             <Button fx:id="sendPasswordCodeButton" text="发送验证码" onAction="#onSendPasswordCode" minWidth="104" styleClass="secondary-button" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
                             <Label text="新密码" styleClass="settings-field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <PasswordField fx:id="newPasswordField" promptText="6-20 位新密码" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <PasswordField fx:id="newPasswordField" promptText="6-20 位新密码" prefWidth="420" maxWidth="420" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
                             <Region GridPane.rowIndex="1" GridPane.columnIndex="2"/>
                             <Label text="确认密码" styleClass="settings-field-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                            <PasswordField fx:id="confirmPasswordField" promptText="再次输入新密码" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <PasswordField fx:id="confirmPasswordField" promptText="再次输入新密码" prefWidth="420" maxWidth="420" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
                             <Button text="更新密码" onAction="#onUpdatePassword" styleClass="primary-button" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
                             <Label fx:id="passwordMessageLabel" wrapText="true" styleClass="form-message-success" GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
                         </GridPane>
