@@ -218,6 +218,153 @@
     -fx-padding: 9 12;
 }
 
+.combo-box-base,
+.choice-box,
+.date-picker {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-border-color: #d6deea;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 0;
+    -fx-min-height: 34;
+    -fx-pref-height: 34;
+    -fx-cursor: hand;
+}
+
+.combo-box-base:hover,
+.choice-box:hover,
+.date-picker:hover {
+    -fx-background-color: #f8fbfd;
+    -fx-border-color: #b8c7d9;
+}
+
+.combo-box-base:focused,
+.choice-box:focused,
+.date-picker:focused {
+    -fx-background-color: white;
+    -fx-border-color: #1769aa;
+    -fx-effect: dropshadow(gaussian, rgba(23, 105, 170, 0.18), 8, 0, 0, 0);
+}
+
+.combo-box-base:disabled,
+.choice-box:disabled,
+.date-picker:disabled {
+    -fx-opacity: 1;
+    -fx-background-color: #eef2f6;
+    -fx-border-color: #d8e0ea;
+    -fx-cursor: default;
+}
+
+.combo-box-base .text-field,
+.date-picker .text-field {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6 0 0 6;
+    -fx-border-color: transparent;
+    -fx-padding: 6 10;
+}
+
+.combo-box-base .list-cell,
+.choice-box .label {
+    -fx-background-color: transparent;
+    -fx-text-fill: #172033;
+    -fx-padding: 6 10;
+}
+
+.pagination-caption {
+    -fx-text-fill: #475467;
+    -fx-font-size: 13;
+}
+
+.combo-box-base:disabled .list-cell,
+.choice-box:disabled .label,
+.date-picker:disabled .text-field {
+    -fx-text-fill: #7b8796;
+}
+
+.combo-box-base .arrow-button,
+.choice-box .open-button,
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 6 6 0;
+    -fx-padding: 0 10 0 8;
+}
+
+.combo-box-base .arrow,
+.choice-box .arrow,
+.date-picker .arrow {
+    -fx-background-color: #475467;
+}
+
+.combo-box-base:hover .arrow,
+.combo-box-base:focused .arrow,
+.choice-box:hover .arrow,
+.choice-box:focused .arrow,
+.date-picker:hover .arrow,
+.date-picker:focused .arrow {
+    -fx-background-color: #1769aa;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-border-color: #d6deea;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(18, 38, 63, 0.12), 14, 0, 0, 5);
+    -fx-padding: 4;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 4;
+    -fx-text-fill: #172033;
+    -fx-padding: 7 10;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #edf3f8;
+    -fx-text-fill: #12395f;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #1769aa;
+    -fx-text-fill: white;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-border-color: #d6deea;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(18, 38, 63, 0.12), 14, 0, 0, 5);
+    -fx-padding: 4;
+}
+
+.choice-box .menu-item {
+    -fx-background-radius: 4;
+    -fx-padding: 7 10;
+}
+
+.choice-box .menu-item:focused {
+    -fx-background-color: #edf3f8;
+}
+
+.choice-box .menu-item .label {
+    -fx-text-fill: #172033;
+}
+
+.choice-box .menu-item:focused .label {
+    -fx-text-fill: #12395f;
+}
+
+.date-picker-popup {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-border-color: #d6deea;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(18, 38, 63, 0.12), 14, 0, 0, 5);
+}
+
 .empty-state {
     -fx-text-fill: #667085;
     -fx-font-size: 13;

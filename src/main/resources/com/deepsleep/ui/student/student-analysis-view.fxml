@@ -12,12 +12,11 @@
         <HBox spacing="10" styleClass="toolbar">
             <Button fx:id="refreshButton" text="刷新历史" onAction="#onRefresh" styleClass="secondary-button"/>
             <Button fx:id="createButton" text="生成分析" onAction="#onCreate" styleClass="primary-button"/>
-            <Button fx:id="editButton" text="查看历史" onAction="#onEdit" styleClass="secondary-button"/>
-            <Button fx:id="deleteButton" text="关闭" onAction="#onDelete" styleClass="secondary-button"/>
+            <Button fx:id="editButton" text="查看详情" onAction="#onEdit" styleClass="secondary-button"/>
         </HBox>
-        <TableView fx:id="dataTable" prefHeight="260" VBox.vgrow="ALWAYS"/>
+        <TableView fx:id="dataTable" prefHeight="220"/>
         <VBox fx:id="formBox" spacing="12" styleClass="form-panel"/>
-        <TextArea fx:id="contentArea" editable="false" wrapText="true" prefRowCount="8"/>
+        <TextArea fx:id="contentArea" editable="false" visible="false" managed="false" wrapText="true"/>
         <Label fx:id="emptyState" wrapText="true" styleClass="empty-state"/>
     </VBox>
 </ScrollPane>

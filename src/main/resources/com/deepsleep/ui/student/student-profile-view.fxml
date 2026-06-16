@@ -1,6 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.deepsleep.ui.student.StudentProfileController">
-    <VBox spacing="20" styleClass="page-root"><VBox spacing="6"><Label fx:id="pageTitle" styleClass="page-title"/><Label fx:id="pageSubtitle" wrapText="true" styleClass="page-subtitle"/></VBox><FlowPane fx:id="statPane" hgap="12" vgap="12"/><HBox spacing="10" styleClass="toolbar"><Button fx:id="refreshButton" text="刷新" onAction="#onRefresh" styleClass="secondary-button"/><Button fx:id="createButton" text="保存" onAction="#onCreate" styleClass="primary-button"/><Button fx:id="editButton" text="重置" onAction="#onEdit" styleClass="secondary-button"/><Button fx:id="deleteButton" text="返回" onAction="#onDelete" styleClass="secondary-button"/></HBox><TableView fx:id="dataTable" prefHeight="360" VBox.vgrow="ALWAYS"/><VBox fx:id="formBox" spacing="12" styleClass="form-panel"/><TextArea fx:id="contentArea" editable="false" wrapText="true" prefRowCount="8"/><Label fx:id="emptyState" wrapText="true" styleClass="empty-state"/></VBox>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.deepsleep.ui.student.StudentProfileController">
+    <VBox spacing="22" styleClass="page-root">
+        <VBox spacing="6">
+            <Label text="学生资料" styleClass="page-title"/>
+            <Label text="查看学院、专业、班级和入学信息，维护个人职务。" wrapText="true" styleClass="page-subtitle"/>
+        </VBox>
+
+        <HBox spacing="24">
+            <VBox spacing="18" prefWidth="280" styleClass="settings-profile-card">
+                <ImageView fx:id="avatarView" fitWidth="96" fitHeight="96" preserveRatio="true" styleClass="avatar-preview"/>
+                <VBox spacing="4">
+                    <Label text="学籍信息" styleClass="settings-profile-name"/>
+                    <Label fx:id="avatarStatusLabel" text="-" styleClass="settings-muted"/>
+                </VBox>
+                <Separator/>
+                <GridPane hgap="12" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="70"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="学院" styleClass="settings-field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label fx:id="deptLabel" text="-" wrapText="true" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="专业" styleClass="settings-field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="majorLabel" text="-" wrapText="true" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="班级" styleClass="settings-field-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="clazzLabel" text="-" wrapText="true" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="入学日期" styleClass="settings-field-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label fx:id="entryDateLabel" text="-" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <VBox spacing="18" HBox.hgrow="ALWAYS">
+                <VBox spacing="14" styleClass="settings-section">
+                    <Label text="可维护资料" styleClass="settings-section-title"/>
+                    <GridPane hgap="12" vgap="12" maxWidth="640">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="96"/>
+                            <ColumnConstraints minWidth="320" prefWidth="420" maxWidth="420"/>
+                        </columnConstraints>
+                        <Label text="职务" styleClass="settings-field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="positionField" promptText="例如：班长、学习委员" prefWidth="420" maxWidth="420"
+                                   styleClass="form-input" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label text="学院、专业、班级和入学日期由管理员维护。" wrapText="true" styleClass="settings-muted"
+                               GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    </GridPane>
+                    <HBox spacing="10">
+                        <Button fx:id="refreshButton" text="刷新" onAction="#onRefresh" styleClass="secondary-button"/>
+                        <Button fx:id="saveButton" text="保存" onAction="#onSave" styleClass="primary-button"/>
+                        <Button fx:id="resetButton" text="重置" onAction="#onReset" styleClass="secondary-button"/>
+                    </HBox>
+                    <Label fx:id="messageLabel" wrapText="true" styleClass="form-message-success"/>
+                </VBox>
+            </VBox>
+        </HBox>
+    </VBox>
 </ScrollPane>

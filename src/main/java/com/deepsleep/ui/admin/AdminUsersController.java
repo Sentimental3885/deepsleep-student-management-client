@@ -18,6 +18,8 @@ import com.deepsleep.ui.common.StaticPageData;
 import com.deepsleep.ui.common.StaticPageSpec;
 import com.deepsleep.ui.common.UiAsync;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -91,11 +93,17 @@ public class AdminUsersController extends BaseStaticPageController {
         Button previous = pageButton("上一页", () -> goToPage(pageNum - 1));
         Button next = pageButton("下一页", () -> goToPage(pageNum + 1));
         Button last = pageButton("末页", () -> goToPage((int) pages));
+        Label pageSizePrefix = new Label("每页");
+        Label pageSizeSuffix = new Label("条");
+        pageSizePrefix.getStyleClass().add("pagination-caption");
+        pageSizeSuffix.getStyleClass().add("pagination-caption");
 
         HBox queryBar = (HBox) refreshButton.getParent();
         queryBar.getChildren().setAll(nameFilter, usernameFilter, roleFilter, reset, refreshButton);
 
-        HBox paginationPanel = new HBox(8, pageSizeSelect, first, previous, pageInfo, next, last);
+        HBox paginationPanel = new HBox(8, pageSizePrefix, pageSizeSelect, pageSizeSuffix, first, previous, pageInfo, next, last);
+        paginationPanel.setAlignment(Pos.CENTER_LEFT);
+        HBox.setMargin(first, new Insets(0, 0, 0, 6));
         paginationPanel.getStyleClass().add("form-panel");
         HBox actionPanel = new HBox(8, createStudent, createTeacher, createButton, editButton, deleteButton);
         actionPanel.getStyleClass().add("form-panel");
