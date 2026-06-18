@@ -3,6 +3,7 @@ package com.deepsleep.ui.student;
 import com.deepsleep.api.vo.GradeAnalysisVO;
 import com.deepsleep.app.AppContext;
 import com.deepsleep.ui.common.BaseStaticPageController;
+import com.deepsleep.ui.common.Rows;
 import com.deepsleep.ui.common.StaticPageData;
 import com.deepsleep.ui.common.StaticPageSpec;
 import com.deepsleep.ui.common.UiAsync;
@@ -79,7 +80,7 @@ public class StudentAnalysisController extends BaseStaticPageController {
     private void showAnalysisDialog(GradeAnalysisVO analysis) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("成绩分析详情");
-        dialog.setHeaderText("生成时间：" + text(analysis.createTime()));
+        dialog.setHeaderText("生成时间：" + Rows.text(analysis.createTime()));
         dialog.getDialogPane().getButtonTypes().setAll(ButtonType.CLOSE);
         dialog.getDialogPane().setPrefWidth(820);
 
@@ -93,7 +94,7 @@ public class StudentAnalysisController extends BaseStaticPageController {
     }
 
     private List<String> analysisRow(GradeAnalysisVO analysis) {
-        return List.of(text(analysis.createTime()), summary(analysis.content()));
+        return List.of(Rows.text(analysis.createTime()), summary(analysis.content()));
     }
 
     private void tuneHistoryColumns() {

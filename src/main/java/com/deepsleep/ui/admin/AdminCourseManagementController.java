@@ -27,6 +27,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.Node;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -49,7 +50,7 @@ public class AdminCourseManagementController {
     private final ComboBox<Choice<ClazzVO>> clazzFilterBox = new ComboBox<>();
 
     private final TableView<ObservableList<String>> courseTable = CourseTables.table(
-            List.of("代码", "课程", "教师", "学期", "学分", "容量", "已选", "状态", "开课班级"));
+            List.of("代码", "课程", "教师", "学期", "学分", "容量", "人数", "状态", "开课班级"));
     private CourseWorkspacePane workspace;
     private List<CourseVO> currentCourses = List.of();
 
@@ -58,6 +59,7 @@ public class AdminCourseManagementController {
         root.getStyleClass().add("page-root");
         workspace = new CourseWorkspacePane(UserRole.ADMIN, statusLabel::setText, this::loadCourses);
         configureFilters();
+        CourseTables.setColumnWidths(courseTable, 98, 160, 120, 120, 76, 76, 76, 88, 240);
 
         SplitPane splitPane = new SplitPane(leftPane(), workspace);
         splitPane.setDividerPositions(0.48);
@@ -106,6 +108,7 @@ public class AdminCourseManagementController {
         dialog.setTitle("新建课程");
         dialog.setHeaderText("填写课程基础信息并选择授课教师、开课班级");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+        dialog.getDialogPane().setPrefWidth(780);
 
         TextField nameField = input("课程名称");
         TextField codeField = input("课程代码");
@@ -115,6 +118,7 @@ public class AdminCourseManagementController {
         ComboBox<Choice<Integer>> statusSelect = statusSelect();
         ComboBox<Choice<TeacherOptionVO>> teacherSelect = new ComboBox<>();
         teacherSelect.setPromptText("授课教师");
+        teacherSelect.setPrefWidth(220);
         ListView<Choice<ClazzVO>> clazzList = new ListView<>();
         clazzList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         clazzList.setPrefHeight(160);
@@ -133,10 +137,18 @@ public class AdminCourseManagementController {
         addField(grid, 2, 0, "容量*", capacityField);
         addField(grid, 2, 1, "状态*", statusSelect);
         addField(grid, 3, 0, "授课教师*", teacherSelect);
+        Label clazzHint = new Label("按 Ctrl 或 Shift 可多选开课班级。");
+        clazzHint.getStyleClass().add("empty-state");
+        Button selectAllClazzes = button("全选班级", "secondary-button");
+        selectAllClazzes.setOnAction(event -> clazzList.getSelectionModel().selectAll());
+        Button clearClazzes = button("清空选择", "secondary-button");
+        clearClazzes.setOnAction(event -> clazzList.getSelectionModel().clearSelection());
         VBox form = new VBox(10,
                 grid,
                 new Label("开课班级*"),
+                clazzHint,
                 clazzList,
+                row(selectAllClazzes, clearClazzes),
                 new Label("课程简介"),
                 introduction);
         dialog.getDialogPane().setContent(form);
@@ -220,7 +232,27 @@ public class AdminCourseManagementController {
         GridPane grid = new GridPane();
         grid.setHgap(12);
         grid.setVgap(10);
+        grid.getColumnConstraints().setAll(
+                labelColumn(),
+                controlColumn(),
+                labelColumn(),
+                controlColumn()
+        );
         return grid;
+    }
+
+    private ColumnConstraints labelColumn() {
+        ColumnConstraints column = new ColumnConstraints();
+        column.setMinWidth(92);
+        column.setPrefWidth(96);
+        return column;
+    }
+
+    private ColumnConstraints controlColumn() {
+        ColumnConstraints column = new ColumnConstraints();
+        column.setMinWidth(180);
+        column.setPrefWidth(220);
+        return column;
     }
 
     private void addField(GridPane grid, int row, int pairColumn, String labelText, Node control) {
@@ -235,6 +267,7 @@ public class AdminCourseManagementController {
         TextField field = new TextField();
         field.setPromptText(prompt);
         field.getStyleClass().add("form-input");
+        field.setPrefWidth(220);
         return field;
     }
 

@@ -1,29 +1,34 @@
 package com.deepsleep.api.enums;
 
 public enum SelectionStatus {
-    PICKED("已选"),
-    DROPPED("已退选"),
-    OVER("已结课"),
-    UNKNOWN("未知");
+    PICKED(1, "已选"),
+    DROPPED(2, "已退选"),
+    OVER(3, "已结课"),
+    UNKNOWN(-1, "未知");
 
+    private final int code;
     private final String label;
 
-    SelectionStatus(String label) {
+    SelectionStatus(int code, String label) {
+        this.code = code;
         this.label = label;
+    }
+
+    public int code() {
+        return code;
     }
 
     public String label() {
         return label;
     }
 
-    public static SelectionStatus of(String name) {
-        if (name == null || name.isBlank()) {
+    public static SelectionStatus of(Integer code) {
+        if (code == null) {
             return UNKNOWN;
         }
-        try {
-            return SelectionStatus.valueOf(name);
-        } catch (IllegalArgumentException ignored) {
-            return UNKNOWN;
-        }
+        return java.util.Arrays.stream(values())
+                .filter(status -> status.code == code)
+                .findFirst()
+                .orElse(UNKNOWN);
     }
 }

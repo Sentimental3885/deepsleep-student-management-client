@@ -111,7 +111,7 @@ public final class StaticPageData {
     public static StaticPageSpec teacherCourses() {
         return table("我的课程", "教师查看授课课程，并进入课程维护、排课和学生名单。",
                 List.of("授课 4", "开课 3", "待结课 2"),
-                List.of("ID", "课程代码", "课程名称", "学期", "学分", "容量", "已选", "状态"),
+                List.of("ID", "课程代码", "课程名称", "学期", "学分", "容量", "人数", "状态"),
                 List.of(
                         List.of("CS101", "数据结构", "2025-2026-2", "60", "42", "开课"),
                         List.of("CS205", "Java 程序设计", "2025-2026-2", "50", "48", "开课")
@@ -123,8 +123,8 @@ public final class StaticPageData {
                 List.of("学生 42", "已评分 28", "未评分 14"),
                 List.of("学生ID", "学号", "姓名", "选课状态", "成绩"),
                 List.of(
-                        List.of("2024001001", "林一", "PICKED", "92.5"),
-                        List.of("2024001002", "周二", "PICKED", "待录入")
+                        List.of("2024001001", "林一", "已选", "92.5"),
+                        List.of("2024001002", "周二", "已选", "待录入")
                 ),
                 List.of("课程 ID", "学生 ID", "成绩"));
     }
@@ -165,7 +165,7 @@ public final class StaticPageData {
     public static StaticPageSpec studentCourseSelection() {
         return table("选课中心", "展示当前班级可选且课程状态为开课的课程，支持选课。",
                 List.of("可选 12", "容量紧张 3", "分页 /selection/courseList"),
-                List.of("ID", "课程代码", "课程名称", "教师", "学期", "学分", "容量", "已选", "状态"),
+                List.of("ID", "课程代码", "课程名称", "教师", "学期", "学分", "容量", "人数", "状态"),
                 List.of(
                         List.of("CS101", "数据结构", "张老师", "3.0", "60", "42"),
                         List.of("PE102", "羽毛球", "刘老师", "1.0", "30", "29")
@@ -175,10 +175,10 @@ public final class StaticPageData {
     public static StaticPageSpec studentSelectedCourses() {
         return table("已选课程", "展示学生已选课程并支持退课。",
                 List.of("已选 6", "总学分 16.5", "可退 5"),
-                List.of("ID", "课程代码", "课程名称", "教师", "学期", "学分", "容量", "已选", "状态"),
+                List.of("ID", "课程代码", "课程名称", "教师", "学期", "学分", "容量", "人数", "状态"),
                 List.of(
-                        List.of("CS101", "数据结构", "张老师", "2025-2026-2", "3.0", "PICKED"),
-                        List.of("EN201", "大学英语", "孙老师", "2025-2026-2", "2.0", "PICKED")
+                        List.of("CS101", "数据结构", "张老师", "2025-2026-2", "3.0", "已选"),
+                        List.of("EN201", "大学英语", "孙老师", "2025-2026-2", "2.0", "已选")
                 ));
     }
 

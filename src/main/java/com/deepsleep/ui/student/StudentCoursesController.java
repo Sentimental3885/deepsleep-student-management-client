@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -35,15 +36,15 @@ public class StudentCoursesController {
 
     private final Label statusLabel = new Label("正在加载课程数据...");
     private final TextField keywordField = input("课程名/代码");
-    private final TextField semesterField = input("学期");
-    private final TextField weekdayField = input("星期");
+    private final ComboBox<String> semesterBox = semesterSelect("全部学期");
+    private final ComboBox<Choice<Integer>> weekdayBox = weekdaySelect();
     private final TextField creditMinField = input("最低学分");
     private final TextField creditMaxField = input("最高学分");
     private final CheckBox noConflictOnly = new CheckBox("仅无冲突");
-    private final TextField scoreSemesterField = input("成绩学期");
+    private final ComboBox<String> scoreSemesterBox = semesterSelect("成绩学期");
 
-    private final TableView<ObservableList<String>> availableTable = CourseTables.table(courseColumns());
-    private final TableView<ObservableList<String>> selectedTable = CourseTables.table(courseColumns());
+    private final TableView<ObservableList<String>> availableTable = CourseTables.table(availableCourseColumns());
+    private final TableView<ObservableList<String>> selectedTable = CourseTables.table(selectedCourseColumns());
     private final TableView<ObservableList<String>> scheduleTable = CourseTables.table(
             List.of("排课ID", "课程ID", "课程", "星期", "节次", "周次", "教室"));
     private final TableView<ObservableList<String>> scoreTable = CourseTables.table(
@@ -54,6 +55,7 @@ public class StudentCoursesController {
     public void initialize() {
         root.getStyleClass().add("page-root");
         workspace = new CourseWorkspacePane(UserRole.STUDENT, statusLabel::setText, this::loadAll);
+        tuneColumns();
 
         TabPane tabs = new TabPane(
                 tab("可选课程", availablePane()),
@@ -80,7 +82,7 @@ public class StudentCoursesController {
         pick.setOnAction(event -> pickSelectedCourse());
         availableTable.setPrefHeight(420);
         availableTable.getSelectionModel().selectedItemProperty().addListener((ignored, oldRow, row) -> openSelectedCourse(availableTable));
-        return box(row(keywordField, semesterField, weekdayField, creditMinField, creditMaxField, noConflictOnly, search),
+        return box(row(keywordField, semesterBox, weekdayBox, creditMinField, creditMaxField, noConflictOnly, search),
                 availableTable,
                 row(detail, pick));
     }
@@ -120,14 +122,14 @@ public class StudentCoursesController {
         detail.setOnAction(event -> openSelectedCourse(scoreTable));
         scoreTable.setPrefHeight(420);
         scoreTable.getSelectionModel().selectedItemProperty().addListener((ignored, oldRow, row) -> openSelectedCourse(scoreTable));
-        return box(row(scoreSemesterField, search, detail), scoreTable);
+        return box(row(scoreSemesterBox, search, detail), scoreTable);
     }
 
     private void loadAll() {
         loadAvailableCourses();
         loadSelectedCourses();
         loadSchedule();
-        if (!scoreSemesterField.getText().isBlank()) {
+        if (selectedSemester(scoreSemesterBox) != null) {
             loadScores();
         }
     }
@@ -137,7 +139,7 @@ public class StudentCoursesController {
                 .listAvailableCourses(selectionQuery())
                 .whenComplete(UiAsync.onComplete(page -> {
                     List<CourseVO> records = page.records() == null ? List.of() : page.records();
-                    CourseTables.setRows(availableTable, records.stream().map(this::courseRow).toList());
+                    CourseTables.setRows(availableTable, records.stream().map(this::availableCourseRow).toList());
                     statusLabel.setText("可选课程加载完成，共 " + Rows.text(page.total()) + " 条。");
                 }, error -> statusLabel.setText(UiAsync.errorMessage(error))));
     }
@@ -147,7 +149,7 @@ public class StudentCoursesController {
                 .listSelections(SelectionQuery.firstPage())
                 .whenComplete(UiAsync.onComplete(page -> {
                     List<CourseVO> records = page.records() == null ? List.of() : page.records();
-                    CourseTables.setRows(selectedTable, records.stream().map(this::courseRow).toList());
+                    CourseTables.setRows(selectedTable, records.stream().map(this::selectedCourseRow).toList());
                     statusLabel.setText("已选课程加载完成，共 " + Rows.text(page.total()) + " 条。");
                 }, error -> statusLabel.setText(UiAsync.errorMessage(error))));
     }
@@ -161,12 +163,13 @@ public class StudentCoursesController {
     }
 
     private void loadScores() {
-        if (scoreSemesterField.getText().isBlank()) {
+        String semester = selectedSemester(scoreSemesterBox);
+        if (semester == null) {
             statusLabel.setText("请先填写成绩学期。");
             return;
         }
         AppContext.getInstance().apiServices().selectionApi()
-                .listScores(new ScoreListQuery(scoreSemesterField.getText(), 1, 20))
+                .listScores(new ScoreListQuery(semester, 1, 20))
                 .whenComplete(UiAsync.onComplete(page -> {
                     List<ScoreVO> records = page.records() == null ? List.of() : page.records();
                     CourseTables.setRows(scoreTable, records.stream().map(Rows::score).toList());
@@ -214,15 +217,15 @@ public class StudentCoursesController {
                 1,
                 20,
                 keywordField.getText(),
-                semesterField.getText(),
-                CourseTables.intValue(weekdayField),
+                selectedSemester(semesterBox),
+                weekdayBox.getValue() == null ? null : weekdayBox.getValue().value(),
                 CourseTables.decimalValue(creditMinField),
                 CourseTables.decimalValue(creditMaxField),
                 noConflictOnly.isSelected() ? Boolean.TRUE : null
         );
     }
 
-    private List<String> courseRow(CourseVO course) {
+    private List<String> availableCourseRow(CourseVO course) {
         return List.of(
                 Rows.text(course.id()),
                 Rows.text(course.code()),
@@ -234,6 +237,20 @@ public class StudentCoursesController {
                 Rows.text(course.size()),
                 CourseStatus.of(course.status()).label(),
                 Boolean.TRUE.equals(course.selectable()) ? "可选" : Rows.text(course.unselectableReason())
+        );
+    }
+
+    private List<String> selectedCourseRow(CourseVO course) {
+        return List.of(
+                Rows.text(course.id()),
+                Rows.text(course.code()),
+                Rows.text(course.name()),
+                Rows.text(course.teacherName()),
+                Rows.text(course.semester()),
+                Rows.text(course.credit()),
+                Rows.text(course.capacity()),
+                Rows.text(course.size()),
+                CourseStatus.of(course.status()).label()
         );
     }
 
@@ -249,8 +266,19 @@ public class StudentCoursesController {
         );
     }
 
-    private List<String> courseColumns() {
-        return List.of("ID", "代码", "课程", "教师", "学期", "学分", "容量", "已选", "状态", "可选性");
+    private List<String> availableCourseColumns() {
+        return List.of("ID", "代码", "课程", "教师", "学期", "学分", "容量", "人数", "状态", "可选性");
+    }
+
+    private List<String> selectedCourseColumns() {
+        return List.of("ID", "代码", "课程", "教师", "学期", "学分", "容量", "人数", "状态");
+    }
+
+    private void tuneColumns() {
+        CourseTables.setColumnWidths(availableTable, 74, 96, 150, 112, 118, 74, 74, 74, 88, 150);
+        CourseTables.setColumnWidths(selectedTable, 74, 96, 160, 120, 118, 74, 74, 74, 88);
+        CourseTables.setColumnWidths(scoreTable, 74, 110, 160, 120, 74, 74, 74, 82, 90, 90);
+        CourseTables.setColumnWidths(scheduleTable, 74, 74, 160, 80, 80, 90, 120);
     }
 
     private VBox header() {
@@ -280,9 +308,48 @@ public class StudentCoursesController {
         return field;
     }
 
+    private ComboBox<String> semesterSelect(String prompt) {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().setAll("全部学期", "2024-2025-1", "2024-2025-2", "2025-2026-1", "2025-2026-2");
+        comboBox.setPromptText(prompt);
+        comboBox.setValue("全部学期");
+        comboBox.setPrefWidth(136);
+        return comboBox;
+    }
+
+    private ComboBox<Choice<Integer>> weekdaySelect() {
+        ComboBox<Choice<Integer>> comboBox = new ComboBox<>();
+        comboBox.getItems().setAll(List.of(
+                new Choice<>("全部星期", null),
+                new Choice<>("周一", 1),
+                new Choice<>("周二", 2),
+                new Choice<>("周三", 3),
+                new Choice<>("周四", 4),
+                new Choice<>("周五", 5),
+                new Choice<>("周六", 6),
+                new Choice<>("周日", 7)
+        ));
+        comboBox.setValue(comboBox.getItems().getFirst());
+        comboBox.setPrefWidth(112);
+        return comboBox;
+    }
+
+    private String selectedSemester(ComboBox<String> comboBox) {
+        String value = comboBox.getValue();
+        return value == null || value.isBlank() || "全部学期".equals(value) ? null : value;
+    }
+
     private Button button(String text, String styleClass) {
         Button button = new Button(text);
         button.getStyleClass().add(styleClass);
         return button;
+    }
+
+    private record Choice<T>(String label, T value) {
+        @SuppressWarnings("NullableProblems")
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }

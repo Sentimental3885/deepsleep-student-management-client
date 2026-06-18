@@ -19,7 +19,7 @@ public class TeacherCoursesController extends BaseStaticPageController {
     protected void loadRemoteData() {
         AppContext.getInstance().apiServices().teacherApi().getCourses()
                 .whenComplete(UiAsync.onComplete(courses -> {
-                    setTable(List.of("ID", "课程代码", "课程名称", "学期", "学分", "容量", "已选", "状态"),
+                    setTable(List.of("ID", "课程代码", "课程名称", "学期", "学分", "容量", "人数", "状态"),
                             courses.stream().map(Rows::teacherCourse).toList());
                     showStatus("授课课程加载完成。");
                 }, error -> showStatus(UiAsync.errorMessage(error))));

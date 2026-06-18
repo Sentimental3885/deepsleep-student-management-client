@@ -30,7 +30,7 @@ public class TeacherTeachingWorkspaceController {
 
     private final Label statusLabel = new Label("正在加载教学数据...");
     private final TableView<ObservableList<String>> courseTable = CourseTables.table(
-            List.of("ID", "代码", "课程", "学期", "学分", "容量", "已选", "状态"));
+            List.of("ID", "代码", "课程", "学期", "学分", "容量", "人数", "状态"));
     private final TableView<ObservableList<String>> scheduleTable = CourseTables.table(
             List.of("排课ID", "课程ID", "课程", "星期", "节次", "周次", "教室"));
     private CourseWorkspacePane workspace;
@@ -39,6 +39,8 @@ public class TeacherTeachingWorkspaceController {
     public void initialize() {
         root.getStyleClass().add("page-root");
         workspace = new CourseWorkspacePane(UserRole.TEACHER, statusLabel::setText, this::loadCourses);
+        CourseTables.setColumnWidths(courseTable, 74, 98, 168, 120, 76, 76, 76, 88);
+        CourseTables.setColumnWidths(scheduleTable, 74, 74, 168, 80, 80, 92, 120);
 
         TabPane leftTabs = new TabPane(
                 tab("授课课程", coursesPane()),

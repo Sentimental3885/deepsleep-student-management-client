@@ -12,7 +12,7 @@ public final class AppContext {
 
     private static final AppContext INSTANCE = new AppContext();
     private static final String APP_STYLESHEET = "/com/deepsleep/ui/styles/app.css";
-    private static final String DEFAULT_BASE_URL = "http://localhost:8080";
+    private static final String DEFAULT_BASE_URL = "http://localhost:22224";
 
     @Setter
     private Stage primaryStage;

@@ -1,6 +1,7 @@
 package com.deepsleep.ui.common;
 
 import com.deepsleep.api.enums.CourseStatus;
+import com.deepsleep.api.enums.SelectionStatus;
 import com.deepsleep.api.enums.UserRole;
 import com.deepsleep.api.vo.*;
 
@@ -141,7 +142,7 @@ public final class Rows {
                 text(student.studentId()),
                 text(student.username()),
                 text(student.studentName()),
-                text(student.selectionStatus()),
+                SelectionStatus.of(student.selectionStatus()).label(),
                 text(student.score())
         );
     }

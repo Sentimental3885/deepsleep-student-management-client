@@ -1,6 +1,6 @@
 package com.deepsleep.api.vo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 import java.math.BigDecimal;
 
@@ -14,7 +14,7 @@ public record ScoreVO(
         BigDecimal credit,
         Integer status,
         BigDecimal score,
-        @JsonProperty("GPA")
+        @JsonAlias("GPA")
         BigDecimal gpa,
         BigDecimal maxScore,
         BigDecimal minScore,

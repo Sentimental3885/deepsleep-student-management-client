@@ -71,7 +71,7 @@ public class AdminCoursesController extends BaseStaticPageController {
         AppContext.getInstance().apiServices().courseApi()
                 .getCourse(id)
                 .whenComplete(UiAsync.onComplete(course -> {
-                    setTable(List.of("ID", "课程代码", "课程名称", "教师", "学期", "学分", "容量", "已选", "状态"),
+                    setTable(List.of("ID", "课程代码", "课程名称", "教师", "学期", "学分", "容量", "人数", "状态"),
                             List.of(Rows.course(course)));
                     showStatus("课程详情加载完成。");
                 }, error -> showStatus(UiAsync.errorMessage(error))));

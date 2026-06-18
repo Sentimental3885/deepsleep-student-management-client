@@ -19,6 +19,6 @@ public record CourseVO(
         List<ClazzVO> clazzes,
         Boolean selectable,
         String unselectableReason,
-        String mySelectionStatus
+        Integer mySelectionStatus
 ) {
 }

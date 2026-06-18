@@ -6,6 +6,7 @@ import com.deepsleep.api.dto.admin.UpdateAdminStudentRequest;
 import com.deepsleep.api.dto.admin.UpdateAdminTeacherRequest;
 import com.deepsleep.api.dto.admin.UpdateAdminUserRequest;
 import com.deepsleep.api.dto.admin.UserListQuery;
+import com.deepsleep.api.enums.Gender;
 import com.deepsleep.api.enums.UserRole;
 import com.deepsleep.api.vo.AdminUserDetailVO;
 import com.deepsleep.api.vo.AdminUserVO;
@@ -50,6 +51,7 @@ public class AdminUsersController extends BaseStaticPageController {
     private long total = 0;
     private long pages = 1;
     private List<AdminUserVO> currentUsers = List.of();
+    private static final String SUPPRESS_ORG_EVENT = "suppressOrgEvent";
 
     @Override
     protected StaticPageSpec pageSpec() {
@@ -413,10 +415,12 @@ public class AdminUsersController extends BaseStaticPageController {
                 .listDepartments()
                 .whenComplete(UiAsync.onComplete(departments -> {
                     fields.deptSelect().setDisable(false);
-                    fields.deptSelect().getItems().setAll(departments.stream()
-                            .map(dept -> new Choice<>(dept.name(), dept.id()))
-                            .toList());
-                    selectById(fields.deptSelect(), selectedDeptId);
+                    suppressOrgEvents(fields.deptSelect(), () -> {
+                        fields.deptSelect().getItems().setAll(departments.stream()
+                                .map(dept -> new Choice<>(dept.name(), dept.id()))
+                                .toList());
+                        selectById(fields.deptSelect(), selectedDeptId);
+                    });
                     loadMajors(fields, selectedDeptId, selectedMajorId, selectedClazzId);
                 }, error -> showStatus(UiAsync.errorMessage(error))));
     }
@@ -431,10 +435,12 @@ public class AdminUsersController extends BaseStaticPageController {
                 .listMajors(deptId)
                 .whenComplete(UiAsync.onComplete(majors -> {
                     fields.majorSelect().setDisable(false);
-                    fields.majorSelect().getItems().setAll(majors.stream()
-                            .map(this::majorChoice)
-                            .toList());
-                    selectById(fields.majorSelect(), selectedMajorId);
+                    suppressOrgEvents(fields.majorSelect(), () -> {
+                        fields.majorSelect().getItems().setAll(majors.stream()
+                                .map(this::majorChoice)
+                                .toList());
+                        selectById(fields.majorSelect(), selectedMajorId);
+                    });
                     if (fields.includeClazz()) {
                         loadClazzes(fields, selectedMajorId, selectedClazzId);
                     }
@@ -447,10 +453,12 @@ public class AdminUsersController extends BaseStaticPageController {
                 .listClazzes(majorId)
                 .whenComplete(UiAsync.onComplete(clazzes -> {
                     fields.clazzSelect().setDisable(false);
-                    fields.clazzSelect().getItems().setAll(clazzes.stream()
-                            .map(this::clazzChoice)
-                            .toList());
-                    selectById(fields.clazzSelect(), selectedClazzId);
+                    suppressOrgEvents(fields.clazzSelect(), () -> {
+                        fields.clazzSelect().getItems().setAll(clazzes.stream()
+                                .map(this::clazzChoice)
+                                .toList());
+                        selectById(fields.clazzSelect(), selectedClazzId);
+                    });
                 }, error -> showStatus(UiAsync.errorMessage(error))));
     }
 
@@ -462,11 +470,17 @@ public class AdminUsersController extends BaseStaticPageController {
         majorSelect.setPromptText("选择专业");
         clazzSelect.setPromptText("选择班级");
         deptSelect.setOnAction(event -> {
+            if (isOrgEventSuppressed(deptSelect)) {
+                return;
+            }
             Choice<Long> selected = deptSelect.getValue();
             loadMajors(new OrgFields(deptSelect, majorSelect, clazzSelect, includeClazz),
                     selected == null ? null : selected.value(), null, null);
         });
         majorSelect.setOnAction(event -> {
+            if (isOrgEventSuppressed(majorSelect)) {
+                return;
+            }
             if (!includeClazz) {
                 return;
             }
@@ -480,8 +494,9 @@ public class AdminUsersController extends BaseStaticPageController {
     private ComboBox<Choice<Integer>> genderSelect(Integer selectedGender) {
         ComboBox<Choice<Integer>> select = new ComboBox<>();
         select.getItems().setAll(List.of(
-                new Choice<>("男", 0),
-                new Choice<>("女", 1)
+                new Choice<>(Gender.UNKNOWN.label(), Gender.UNKNOWN.code()),
+                new Choice<>(Gender.MALE.label(), Gender.MALE.code()),
+                new Choice<>(Gender.FEMALE.label(), Gender.FEMALE.code())
         ));
         select.setPromptText("选择性别");
         selectByValue(select, selectedGender);
@@ -566,6 +581,19 @@ public class AdminUsersController extends BaseStaticPageController {
 
     private void selectById(ComboBox<Choice<Long>> select, Long id) {
         selectByValue(select, id);
+    }
+
+    private void suppressOrgEvents(ComboBox<?> select, Runnable action) {
+        select.getProperties().put(SUPPRESS_ORG_EVENT, Boolean.TRUE);
+        try {
+            action.run();
+        } finally {
+            select.getProperties().remove(SUPPRESS_ORG_EVENT);
+        }
+    }
+
+    private boolean isOrgEventSuppressed(ComboBox<?> select) {
+        return Boolean.TRUE.equals(select.getProperties().get(SUPPRESS_ORG_EVENT));
     }
 
     private <T> T selectedValue(ComboBox<Choice<T>> select) {

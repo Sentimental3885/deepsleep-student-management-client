@@ -8,6 +8,6 @@ public record CourseStudentVO(
         String studentAvatar,
         String username,
         BigDecimal score,
-        String selectionStatus
+        Integer selectionStatus
 ) {
 }

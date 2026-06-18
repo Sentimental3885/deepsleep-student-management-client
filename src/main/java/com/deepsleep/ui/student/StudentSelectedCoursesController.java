@@ -21,7 +21,7 @@ public class StudentSelectedCoursesController extends BaseStaticPageController {
         AppContext.getInstance().apiServices().selectionApi()
                 .listSelections(new PageQuery(1, 20))
                 .whenComplete(UiAsync.onComplete(page -> {
-                    setTable(List.of("ID", "课程代码", "课程名称", "教师", "学期", "学分", "容量", "已选", "状态"),
+                    setTable(List.of("ID", "课程代码", "课程名称", "教师", "学期", "学分", "容量", "人数", "状态"),
                             page.records().stream().map(Rows::course).toList());
                     showStatus("已选课程加载完成，共 " + Rows.text(page.total()) + " 条。");
                 }, error -> showStatus(UiAsync.errorMessage(error))));

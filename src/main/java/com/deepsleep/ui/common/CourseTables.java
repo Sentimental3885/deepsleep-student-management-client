@@ -3,6 +3,7 @@ package com.deepsleep.ui.common;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -29,11 +30,24 @@ public final class CourseTables {
         for (int i = 0; i < columns.size(); i++) {
             int columnIndex = i;
             TableColumn<ObservableList<String>, String> column = new TableColumn<>(columns.get(i));
+            Label header = new Label(columns.get(i));
+            header.setWrapText(true);
+            column.setText(null);
+            column.setGraphic(header);
             column.setCellValueFactory(data -> new ReadOnlyStringWrapper(
                     data.getValue().size() > columnIndex ? data.getValue().get(columnIndex) : ""
             ));
             column.setPrefWidth(120);
+            column.setMinWidth(74);
             table.getColumns().add(column);
+        }
+    }
+
+    public static void setColumnWidths(TableView<ObservableList<String>> table, double... widths) {
+        for (int i = 0; i < widths.length && i < table.getColumns().size(); i++) {
+            TableColumn<ObservableList<String>, ?> column = table.getColumns().get(i);
+            column.setPrefWidth(widths[i]);
+            column.setMinWidth(Math.min(widths[i], 90));
         }
     }
 

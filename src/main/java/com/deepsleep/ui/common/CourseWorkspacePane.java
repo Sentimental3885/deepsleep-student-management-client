@@ -11,6 +11,7 @@ import com.deepsleep.api.dto.selection.CourseStudentQuery;
 import com.deepsleep.api.dto.selection.EndSelectionBatchRequest;
 import com.deepsleep.api.dto.teacher.TeacherOptionQuery;
 import com.deepsleep.api.enums.CourseStatus;
+import com.deepsleep.api.enums.SelectionStatus;
 import com.deepsleep.api.enums.UserRole;
 import com.deepsleep.api.vo.ClassroomVO;
 import com.deepsleep.api.vo.ClazzVO;
@@ -36,6 +37,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.Node;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -91,6 +93,7 @@ public class CourseWorkspacePane extends VBox {
         setSpacing(14);
         setPadding(new Insets(4, 0, 0, 0));
         hideTechnicalColumns();
+        tuneTables();
         if (role == UserRole.TEACHER) {
             configureStudentScoreEditing();
         }
@@ -559,11 +562,21 @@ public class CourseWorkspacePane extends VBox {
         dialog.setTitle("维护开课班级");
         dialog.setHeaderText("选择该课程面向的班级");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+        dialog.getDialogPane().setPrefWidth(560);
         ListView<Choice<ClazzVO>> clazzList = new ListView<>();
         clazzList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         clazzList.setPrefHeight(260);
-        loadClazzes(clazzList, List.of());
-        dialog.getDialogPane().setContent(clazzList);
+        List<Long> selectedIds = currentCourse == null || currentCourse.clazzes() == null
+                ? List.of()
+                : currentCourse.clazzes().stream().map(ClazzVO::id).toList();
+        loadClazzes(clazzList, selectedIds);
+        Label hint = new Label("按 Ctrl 或 Shift 可多选班级。");
+        hint.getStyleClass().add("empty-state");
+        Button selectAll = button("全选班级", "secondary-button");
+        selectAll.setOnAction(event -> clazzList.getSelectionModel().selectAll());
+        Button clear = button("清空选择", "secondary-button");
+        clear.setOnAction(event -> clazzList.getSelectionModel().clearSelection());
+        dialog.getDialogPane().setContent(new VBox(10, hint, clazzList, row(selectAll, clear)));
         dialog.setResultConverter(buttonType -> buttonType == ButtonType.OK
                 ? clazzList.getSelectionModel().getSelectedItems().stream().map(choice -> choice.value().id()).toList()
                 : null);
@@ -584,6 +597,7 @@ public class CourseWorkspacePane extends VBox {
         dialog.setTitle(update ? "编辑排课" : "新增排课");
         dialog.setHeaderText(update ? "修改选中的排课安排" : "为当前课程新增排课安排");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+        dialog.getDialogPane().setPrefWidth(820);
 
         ComboBox<Choice<Integer>> weekdayBox = weekdaySelect();
         ComboBox<Choice<Integer>> sectionBox = sectionSelect();
@@ -592,6 +606,8 @@ public class CourseWorkspacePane extends VBox {
         ComboBox<String> semesterBox = semesterSelect();
         ComboBox<Choice<ClassroomVO>> classroomBox = new ComboBox<>();
         classroomBox.setPromptText("教室");
+        classroomBox.setPrefWidth(160);
+        HBox.setHgrow(classroomBox, Priority.ALWAYS);
         Button loadClassrooms = button("加载可用教室", "secondary-button");
         loadClassrooms.setOnAction(event -> loadAvailableClassrooms(
                 classroomBox,
@@ -733,9 +749,16 @@ public class CourseWorkspacePane extends VBox {
                 + "\n容量：" + Rows.text(course.size()) + "/" + Rows.text(course.capacity())
                 + "\n状态：" + CourseStatus.of(course.status()).label()
                 + "\n开课班级：" + clazzNames(course.clazzes())
-                + "\n选课状态：" + Rows.text(course.mySelectionStatus())
+                + studentSelectionLine(course)
                 + "\n不可选原因：" + Rows.text(course.unselectableReason())
                 + "\n简介：" + Rows.text(course.introduction());
+    }
+
+    private String studentSelectionLine(CourseVO course) {
+        if (role != UserRole.STUDENT) {
+            return "";
+        }
+        return "\n选课状态：" + SelectionStatus.of(course.mySelectionStatus()).label();
     }
 
     private List<String> scheduleRow(ScheduleVO schedule) {
@@ -862,6 +885,13 @@ public class CourseWorkspacePane extends VBox {
         }
     }
 
+    private void tuneTables() {
+        CourseTables.setColumnWidths(scheduleTable, 74, 74, 160, 80, 80, 92, 120);
+        CourseTables.setColumnWidths(examTable, 74, 150, 82, 140, 82, 112, 130, 160);
+        CourseTables.setColumnWidths(studentTable, 74, 118, 120, 100, 88);
+        CourseTables.setColumnWidths(conflictTable, 74, 74, 160, 80, 80, 92, 120);
+    }
+
     private void configureStudentScoreEditing() {
         CourseTables.makeEditableTextColumn(studentTable, 4, row -> {
             Long studentId = studentId(row);
@@ -889,6 +919,7 @@ public class CourseWorkspacePane extends VBox {
         ));
         comboBox.setValue(comboBox.getItems().getFirst());
         comboBox.setPromptText("选课状态");
+        comboBox.setPrefWidth(120);
         return comboBox;
     }
 
@@ -901,6 +932,7 @@ public class CourseWorkspacePane extends VBox {
         comboBox.getItems().add(new Choice<>("未开课", 0));
         comboBox.getItems().add(new Choice<>("开课", 1));
         comboBox.setPromptText("状态");
+        comboBox.setPrefWidth(160);
         return comboBox;
     }
 
@@ -918,6 +950,7 @@ public class CourseWorkspacePane extends VBox {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().setAll("2024-2025-1", "2024-2025-2", "2025-2026-1", "2025-2026-2");
         comboBox.setPromptText("学期");
+        comboBox.setPrefWidth(160);
         return comboBox;
     }
 
@@ -933,6 +966,7 @@ public class CourseWorkspacePane extends VBox {
                 new Choice<>("周日", 7)
         ));
         comboBox.setPromptText("星期");
+        comboBox.setPrefWidth(160);
         return comboBox;
     }
 
@@ -946,6 +980,7 @@ public class CourseWorkspacePane extends VBox {
                 new Choice<>("第 5 节", 5)
         ));
         comboBox.setPromptText("节次");
+        comboBox.setPrefWidth(160);
         return comboBox;
     }
 
@@ -957,6 +992,7 @@ public class CourseWorkspacePane extends VBox {
                 new Choice<>("补考", 3)
         ));
         comboBox.setPromptText("考试类型");
+        comboBox.setPrefWidth(160);
         return comboBox;
     }
 
@@ -1029,7 +1065,27 @@ public class CourseWorkspacePane extends VBox {
         GridPane grid = new GridPane();
         grid.setHgap(12);
         grid.setVgap(10);
+        grid.getColumnConstraints().setAll(
+                labelColumn(),
+                controlColumn(),
+                labelColumn(),
+                controlColumn()
+        );
         return grid;
+    }
+
+    private ColumnConstraints labelColumn() {
+        ColumnConstraints column = new ColumnConstraints();
+        column.setMinWidth(78);
+        column.setPrefWidth(86);
+        return column;
+    }
+
+    private ColumnConstraints controlColumn() {
+        ColumnConstraints column = new ColumnConstraints();
+        column.setMinWidth(180);
+        column.setPrefWidth(280);
+        return column;
     }
 
     private void addField(GridPane grid, int row, int pairColumn, String labelText, Node control) {
@@ -1044,6 +1100,7 @@ public class CourseWorkspacePane extends VBox {
         TextField field = new TextField();
         field.setPromptText(prompt);
         field.getStyleClass().add("form-input");
+        field.setPrefWidth(220);
         return field;
     }
 
